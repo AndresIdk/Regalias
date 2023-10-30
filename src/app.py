@@ -1,9 +1,11 @@
 from flask import Flask
+from flask_cors import CORS
 from routes import api
 from routes import mqtt_router as mqtt
 from mqtt.mqtt_client import create_mqtt_client
 
 app = Flask(__name__)
+CORS(app)
 
 # Manejo de errores para pagina inexistentes
 @app.errorhandler(404)
@@ -19,4 +21,4 @@ client = create_mqtt_client(mqtt) # Comunicacion con el broker
 client.loop_start() # Inicia el loop del cliente MQTT
 
 if __name__ == '__main__':
-    app.run(debug=False, port=5000)
+    app.run(debug=True, port=5000)
