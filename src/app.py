@@ -15,7 +15,7 @@ mqtt = app.register_blueprint(mqtt.mqtt, url_prefix='/mqtt') # Comunicacion con 
 api = app.register_blueprint(api.api, url_prefix='/api') # Comunicacion con el frontend
 
 # Inicializacion del cliente MQTT
-client = create_mqtt_client(app) # Comunicacion con el broker
+client = create_mqtt_client(mqtt) # Comunicacion con el broker
 client.loop_start() # Inicia el loop del cliente MQTT
 
 if __name__ == '__main__':
