@@ -22,7 +22,6 @@ def show_data(data):
         dato = data[i][0] # Se toma el dato
         datoP = dato.strip("()") # Se quitan los parentesis
         datoC = datoP.split(",") # Se separa por comas
-        print("datoC:",datoC)
 
         dat.append({
             "id": datoC[0],

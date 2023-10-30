@@ -6,7 +6,6 @@ db = DBConnection()
 def get_all():
     query = "SELECT regalias.get_all()"
     data = db.execute_query(query).fetchall()
-    print("La data de mierda: ", data)
     data = ser.show_data(data)
     return data
     
