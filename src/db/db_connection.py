@@ -22,3 +22,10 @@ class DBConnection:
         self.cursor.execute(query, params or None)
         self.connection.commit()
         return self.cursor
+    
+    def close_connection(self):
+        self.cursor.close()
+        self.connection.close()
+    
+    def query_error_handler(self):
+        self.connection.rollback()
