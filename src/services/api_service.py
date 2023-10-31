@@ -1,4 +1,4 @@
-from entities.nodo import Nodo as nd
+from models.nodo import Nodo as nd
 from datetime import datetime
 
 date = datetime.today()
