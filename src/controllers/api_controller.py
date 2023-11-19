@@ -16,7 +16,7 @@ def get_all():
 
 def insert_nodo(nodo):
     try:
-        query = "SELECT regalias.insert_nodo(%s, %s, %s, %s, %s, %s)"
+        query = "SELECT regalias.insert_nodo(%s, %s, %s, %s, %s, %s, %s, %s)"
         node = ser.create_nodo(nodo)
         return db.execute_query(query, node)
     except Exception as e:

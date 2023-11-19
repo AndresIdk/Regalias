@@ -12,7 +12,9 @@ def create_nodo(nodo):
         str(node.ph),
         str(node.ec),
         str(node.od),
-        str(node.tds)
+        str(node.tds),
+        str(node.coordenadas["latitud"]),
+        str(node.coordenadas["altitud"])
     )
     return nodoT
 
@@ -30,6 +32,8 @@ def show_data(data):
             "ph": datoC[3],
             "ec": datoC[4],
             "od": datoC[5],
-            "tds": datoC[6]
+            "tds": datoC[6],
+            "latitud": datoC[7],
+            "altitud": datoC[8]
         })
     return dat

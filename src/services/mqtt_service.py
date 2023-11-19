@@ -1,4 +1,3 @@
-from flask import jsonify
 from controllers import api_controller as con
 import json
 
