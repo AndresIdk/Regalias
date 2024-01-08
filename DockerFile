@@ -2,6 +2,10 @@ FROM python:3.12-alpine
 
 ENV FLASK_APP regalias/src/app.py
 ENV FLASK_RUN_HOST 0.0.0.0
+ENV DB_HOST=localhost
+ENV DB_NAME=regalias
+ENV DB_USER=semard
+ENV DB_PASSWORD=semard
 
 WORKDIR /regalias
 

@@ -1,0 +1,40 @@
+version: '3'
+
+services:
+  api-regalias:
+    image: regalias-img
+    environment:
+      DB_HOST: postgres
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+      - emqx
+      
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: regalias
+      POSTGRES_USER: semard
+      POSTGRES_PASSWORD: semard
+    ports:
+      - "5432:5432"
+
+  emqx:
+    image: emqx/emqx:latest
+    ports:
+      - "1883:1883"
+      - "8083:8083"
+      - "8084:8084"
+      - "8883:8883"
+      - "18083:18083"
+
+  nginx:
+    image: nginx:latest
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - api-regalias
+
