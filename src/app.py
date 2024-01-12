@@ -19,4 +19,4 @@ client = create_mqtt_client() # Comunicacion con el broker
 client.loop_start() # Inicia el loop del cliente MQTT
 
 if __name__ == '__main__':
-    app.run(debug=False, port=5000)
+    app.run(debug=False, port=4000)

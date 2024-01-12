@@ -35,6 +35,7 @@ services:
       DB_NAME: regalias
       DB_USER: semard
       DB_PASSWORD: semard123
+      MQTT_HOST: emqx
     ports:
       - "5000:5000"
     networks:
