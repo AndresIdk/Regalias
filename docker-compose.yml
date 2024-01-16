@@ -27,6 +27,8 @@ services:
       - "8084:8084"
       - "8883:8883"
       - "18083:18083"
+    networks:
+      - main
   
   api-regalias:
     image: regalias-img
@@ -37,7 +39,7 @@ services:
       DB_PASSWORD: semard123
       MQTT_HOST: emqx
     ports:
-      - "5000:5000"
+      - "4000:4000"
     networks:
       - main
     depends_on:

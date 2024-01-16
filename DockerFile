@@ -13,10 +13,4 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . ./regalias
 
-# # Copia el script y da permisos de ejecución
-# COPY scripts/wait-for-it.sh /regalias/scripts/wait-for-it.sh
-# RUN chmod +x /regalias/scripts/wait-for-it.sh
-
-# # CMD establece el comando predeterminado a ejecutar cuando se inicia el contenedor
-# CMD ["./scripts/wait-for-it.sh", "postgres:5432", "--", "flask", "run"]
-CMD ["flask", "run"]
+CMD ["python", "regalias/src/app.py"]
