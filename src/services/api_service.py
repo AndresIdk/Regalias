@@ -24,7 +24,6 @@ def show_data(data):
         dato = data[i][0] # Se toma el dato
         datoP = dato.strip("()") # Se quitan los parentesis
         datoC = datoP.split(",") # Se separa por comas
-
         dat.append({
             "id": datoC[0],
             "fecha": datetime.strptime(datoC[1], '%Y-%m-%d'),
