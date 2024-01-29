@@ -5,12 +5,11 @@ api = Blueprint('api', __name__)
 
 @api.route('/get', methods=['GET'])
 def get_api():
-    # try:
-    #     data = con.get_all()
-    #     return jsonify(data)
-    # except Exception as e:
-    #     return jsonify({"error": str(e)}), 500
-    return jsonify({"message": "Hello World!"})
+    try:
+        data = con.get_all()
+        return jsonify(data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @api.route('/insert', methods=['POST'])
 def insert_nodo():
