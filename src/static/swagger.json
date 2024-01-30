@@ -1,0 +1,79 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "title": "SEMARD Water Quality API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/get": {
+            "get": {
+                "tags": [
+                    "Get all registers"
+                ],
+                "summary": "API GET",
+                "description": "Se obtienen todos los registros de la base de datos",
+                "operationId": "getAll",
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successful operation",
+                        "schema": {
+                            "$ref": "#/definitions/nodo"
+                        }
+                    },
+                    "400": {
+                        "description": "Server error"
+                    },
+                    "404": {
+                        "description": "Access not found"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "nodo": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 1
+                },
+                "fecha": {
+                    "type": "string",
+                    "example": "2020-10-10"
+                },
+                "ph": {
+                    "type": "string",
+                    "example": "7.5"
+                },
+                "tds": {
+                    "type": "string",
+                    "example": "0.5"
+                },
+                "temp": {
+                    "type": "string",
+                    "example": "25"
+                },
+                "ec": {
+                    "type": "string",
+                    "example": "0.5"
+                },
+                "od": {
+                    "type": "string",
+                    "example": "0.5"
+                },
+                "altitud": {
+                    "type": "string",
+                    "example": "0.5"
+                },
+                "latitud": {
+                    "type": "string",
+                    "example": "0.5"
+                }
+            }
+        }
+    }
+}
