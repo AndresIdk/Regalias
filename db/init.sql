@@ -25,52 +25,86 @@ CREATE SCHEMA regalias;
 
 ALTER SCHEMA regalias OWNER TO semard;
 
+--
+-- Name: get_all(); Type: FUNCTION; Schema: regalias; Owner: semard
+--
+
+CREATE FUNCTION regalias.get_all() RETURNS json
+    LANGUAGE plpgsql
+    AS $$DECLARE
+    result JSON;
+BEGIN
+    SELECT json_agg(node)
+    INTO result
+    FROM (
+        SELECT
+            c.id_node,
+            c.description,
+            json_agg(
+                jsonb_build_object(
+                    'id_registro', r.id_data,
+                    'geolocation',
+                    jsonb_build_object(
+                        'alt', r.altitud,
+                        'lat', r.latitud
+                    ),
+                    'sensors',
+                    jsonb_build_object(
+                        'data',
+                        jsonb_build_object(
+                            'temp', r.tem,
+                            'ph', r.ph,
+                            'ec', r.ec,
+                            'od', r.od,
+                            'tds', r.tds
+                        )
+                    ),
+                    'timestamp', r.date
+                ) ORDER BY r.date ASC -- Ordenar por fecha descendente
+            ) AS data
+        FROM
+            regalias.node c
+        LEFT JOIN
+            regalias.data r ON c.id_node = r.id_node
+        GROUP BY
+            c.id_node, c.description
+    ) node;
+
+    RETURN COALESCE(result, '[]'::JSON);
+END;$$;
+
+
+ALTER FUNCTION regalias.get_all() OWNER TO semard;
+
 SET default_tablespace = '';
 
 SET default_table_access_method = heap;
 
 --
--- Name: nodo; Type: TABLE; Schema: regalias; Owner: semard
+-- Name: data; Type: TABLE; Schema: regalias; Owner: semard
 --
 
-CREATE TABLE regalias.nodo (
-    id_nodo bigint NOT NULL,
-    fecha date NOT NULL,
+CREATE TABLE regalias.data (
+    id_data bigint NOT NULL,
+    date date NOT NULL,
     tem character varying,
     ph character varying,
     ec character varying,
     od character varying,
-    tds character varying
+    tds character varying,
+    id_node integer NOT NULL,
+    altitud character varying,
+    latitud character varying
 );
 
 
-ALTER TABLE regalias.nodo OWNER TO semard;
-
---
--- Name: get_all(); Type: FUNCTION; Schema: regalias; Owner: semard
---
-
-CREATE FUNCTION regalias.get_all() RETURNS SETOF regalias.nodo
-    LANGUAGE plpgsql
-    AS $$
-
-DECLARE
-	nodo_row regalias.nodo%ROWTYPE;
-BEGIN
-	FOR nodo_row IN SELECT * FROM regalias.nodo LOOP
-    	RETURN NEXT nodo_row;
-    END LOOP;
-END;
-$$;
-
-
-ALTER FUNCTION regalias.get_all() OWNER TO semard;
+ALTER TABLE regalias.data OWNER TO semard;
 
 --
 -- Name: insert_nodo(date, character varying, character varying, character varying, character varying, character varying); Type: FUNCTION; Schema: regalias; Owner: semard
 --
 
-CREATE FUNCTION regalias.insert_nodo(fechab date, tempp character varying, phb character varying, ecb character varying, odb character varying, tdsb character varying) RETURNS regalias.nodo
+CREATE FUNCTION regalias.insert_nodo(fechab date, tempp character varying, phb character varying, ecb character varying, odb character varying, tdsb character varying) RETURNS regalias.data
     LANGUAGE plpgsql
     AS $$
 DECLARE 
@@ -85,10 +119,22 @@ $$;
 ALTER FUNCTION regalias.insert_nodo(fechab date, tempp character varying, phb character varying, ecb character varying, odb character varying, tdsb character varying) OWNER TO semard;
 
 --
+-- Name: node; Type: TABLE; Schema: regalias; Owner: semard
+--
+
+CREATE TABLE regalias.node (
+    id_node integer NOT NULL,
+    description character varying NOT NULL
+);
+
+
+ALTER TABLE regalias.node OWNER TO semard;
+
+--
 -- Name: nodo_id_seq; Type: SEQUENCE; Schema: regalias; Owner: semard
 --
 
-ALTER TABLE regalias.nodo ALTER COLUMN id_nodo ADD GENERATED ALWAYS AS IDENTITY (
+ALTER TABLE regalias.data ALTER COLUMN id_data ADD GENERATED ALWAYS AS IDENTITY (
     SEQUENCE NAME regalias.nodo_id_seq
     START WITH 1
     INCREMENT BY 1
@@ -99,93 +145,39 @@ ALTER TABLE regalias.nodo ALTER COLUMN id_nodo ADD GENERATED ALWAYS AS IDENTITY 
 
 
 --
--- Data for Name: nodo; Type: TABLE DATA; Schema: regalias; Owner: semard
+-- Name: registros_id_node_seq; Type: SEQUENCE; Schema: regalias; Owner: semard
 --
 
-COPY regalias.nodo (id_nodo, fecha, tem, ph, ec, od, tds) FROM stdin;
-1	2023-10-15	10.5	10.2	10.1	10.3	10.4
-2	2023-10-15	10.5	10.2	10.1	10.3	10.4
-8	2023-10-15	10.5	10.2	10.1	10.3	10.4
-9	2023-10-15	10.5	10.2	10.1	10.3	10.4
-10	2023-10-28	1.1	2.2	3.3	4.4	5.5
-11	2023-10-28	1.1	2.2	3.3	4.4	5.5
-12	2023-10-28	1.1	2.2	3.3	4.4	5.5
-13	2023-10-28	1.1	2.3	3.3	4.4	5.5
-14	2023-10-28	1.1	2.3	3.3	4.4	None
-15	2023-10-28	1.1	2.3	None	4.4	5.5
-16	2023-10-30	1.1	2.3	3.3	4.4	5.5
-17	2023-10-30	1.1	2.3	3.3	4.4	5.5
-18	2023-10-30	1.1	2.3	3.3	4.4	5.5
-19	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-20	2023-10-30	1.1	2.3	3.3	4.4	5.5
-21	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-22	2023-10-30	1.1	2.3	3.3	4.4	5.5
-23	2023-10-30	1.1	2.3	3.3	4.4	5.5
-24	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-25	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-26	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-27	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-28	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-29	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-30	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-31	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-32	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-33	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-34	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-35	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-36	2023-10-30	1.1	2.3	3.3	4.4	5.5
-37	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-38	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-39	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-40	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-41	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-42	2023-10-30	21.4375	11.0734396	-0.064319998	-138	0
-43	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-44	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-45	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-46	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-47	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-48	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-49	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-50	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-51	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-52	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-53	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-54	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-55	2023-10-31	1.1	2.3	3.3	4.4	5.5
-56	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-57	2023-10-31	21.4375	11.0734396	-0.064319998	-138	0
-58	2023-10-31	1.1	2.3	3.3	4.4	5.5
-59	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-60	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-61	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-62	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-63	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-64	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-65	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-66	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-67	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-68	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-69	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-70	2023-11-15	21.4375	11.0734396	-0.064319998	-138	0
-71	2023-11-15	21.4375	11.0734396	-0.064319998	-138	0
-72	2023-11-15	21.4375	11.0734396	-0.064319998	-138	0
-73	2023-11-15	21.4375	11.0734396	-0.064319998	-138	0
-74	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-75	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-76	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-77	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-78	2023-11-14	21.4375	11.0734396	-0.064319998	-138	0
-79	2023-11-15	21.4375	11.0734396	-0.064319998	-138	0
-80	2023-11-15	21.4375	11.0734396	-0.064319998	-138	0
-81	2023-11-15	21.4375	11.0734396	-0.064319998	-138	0
-82	2023-11-15	21.4375	11.0734396	-0.064319998	-138	0
-83	2023-11-17	21.4375	11.0734396	-0.064319998	-138	0
-84	2023-11-17	21.4375	11.0734396	-0.064319998	-138	0
-85	2023-11-16	21.4375	11.0734396	-0.064319998	-138	0
-86	2023-11-16	21.4375	11.0734396	-0.064319998	-138	0
-87	2023-11-17	21.4375	11.0734396	-0.064319998	-138	0
-88	2023-11-17	21.4375	11.0734396	-0.064319998	-138	0
+ALTER TABLE regalias.node ALTER COLUMN id_node ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME regalias.registros_id_node_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
+-- Data for Name: data; Type: TABLE DATA; Schema: regalias; Owner: semard
+--
+
+COPY regalias.data (id_data, date, tem, ph, ec, od, tds, id_node, altitud, latitud) FROM stdin;
+90	2023-11-23	8	1.5	10	14	24	1	28	10
+91	2023-12-23	7	1.5	10	14	24	1	28	11
+92	2024-01-23	9	1.5	10	14	24	1	28	12
+93	2024-01-25	22	1.5	10	14	24	2	28	19
+94	2024-01-30	24	1.5	10	41	24	2	48	19
+\.
+
+
+--
+-- Data for Name: node; Type: TABLE DATA; Schema: regalias; Owner: semard
+--
+
+COPY regalias.node (id_node, description) FROM stdin;
+1	Laguito
+2	Cienaga de la virgen
 \.
 
 
@@ -193,15 +185,38 @@ COPY regalias.nodo (id_nodo, fecha, tem, ph, ec, od, tds) FROM stdin;
 -- Name: nodo_id_seq; Type: SEQUENCE SET; Schema: regalias; Owner: semard
 --
 
-SELECT pg_catalog.setval('regalias.nodo_id_seq', 88, true);
+SELECT pg_catalog.setval('regalias.nodo_id_seq', 94, true);
 
 
 --
--- Name: nodo nodo_pkey; Type: CONSTRAINT; Schema: regalias; Owner: semard
+-- Name: registros_id_node_seq; Type: SEQUENCE SET; Schema: regalias; Owner: semard
 --
 
-ALTER TABLE ONLY regalias.nodo
-    ADD CONSTRAINT nodo_pkey PRIMARY KEY (id_nodo);
+SELECT pg_catalog.setval('regalias.registros_id_node_seq', 2, true);
+
+
+--
+-- Name: data nodo_pkey; Type: CONSTRAINT; Schema: regalias; Owner: semard
+--
+
+ALTER TABLE ONLY regalias.data
+    ADD CONSTRAINT nodo_pkey PRIMARY KEY (id_data);
+
+
+--
+-- Name: node registros_pkey; Type: CONSTRAINT; Schema: regalias; Owner: semard
+--
+
+ALTER TABLE ONLY regalias.node
+    ADD CONSTRAINT registros_pkey PRIMARY KEY (id_node);
+
+
+--
+-- Name: data data_id_node_fkey; Type: FK CONSTRAINT; Schema: regalias; Owner: semard
+--
+
+ALTER TABLE ONLY regalias.data
+    ADD CONSTRAINT data_id_node_fkey FOREIGN KEY (id_node) REFERENCES regalias.node(id_node) ON UPDATE CASCADE ON DELETE CASCADE NOT VALID;
 
 
 --
@@ -219,10 +234,10 @@ GRANT ALL ON SCHEMA regalias TO regalias_admin;
 
 
 --
--- Name: TABLE nodo; Type: ACL; Schema: regalias; Owner: semard
+-- Name: TABLE data; Type: ACL; Schema: regalias; Owner: semard
 --
 
-GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE regalias.nodo TO regalias_admin;
+GRANT SELECT,INSERT,DELETE,UPDATE ON TABLE regalias.data TO regalias_admin;
 
 
 --

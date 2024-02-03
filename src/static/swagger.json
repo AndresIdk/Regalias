@@ -37,41 +37,63 @@
         "nodo": {
             "type": "object",
             "properties": {
-                "id": {
+                "id_node": {
                     "type": "integer",
                     "example": 1
                 },
-                "fecha": {
+                "description": {
                     "type": "string",
-                    "example": "2020-10-10"
+                    "example": "Laguito"
                 },
-                "ph": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/data"
+                    }
+                }
+            }
+        },
+        "data": {
+            "type": "object",
+            "properties": {
+                "id_registro": {
+                    "type": "integer",
+                    "example": 15
+                },
+                "sensors": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/sensor"
+                    }
+                },
+                "timestamp": {
                     "type": "string",
-                    "example": "7.5"
-                },
-                "tds": {
-                    "type": "string",
-                    "example": "0.5"
-                },
-                "temp": {
-                    "type": "string",
-                    "example": "25"
-                },
+                    "example": "2021-05-20 12:00:00"
+                }
+            }
+        },
+        "sensor": {
+            "type": "object",
+            "properties": {
                 "ec": {
-                    "type": "string",
-                    "example": "0.5"
+                    "type": "integer",
+                    "example": 15
                 },
                 "od": {
-                    "type": "string",
-                    "example": "0.5"
+                    "type": "float",
+                    "example": 7.5
                 },
-                "altitud": {
-                    "type": "string",
-                    "example": "0.5"
+                "ph": {
+                    "type": "float",
+                    "example": 25.5
                 },
-                "latitud": {
-                    "type": "string",
-                    "example": "0.5"
+                "tds": {
+                    "type": "float",
+                    "example": 25.5
+                },
+                "temp": {
+                    "type": "float",
+                    "example": 25.5
                 }
             }
         }

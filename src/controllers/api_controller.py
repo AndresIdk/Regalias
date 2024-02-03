@@ -6,8 +6,7 @@ db = DBConnection()
 def get_all():
     try:
         query = "SELECT regalias.get_all()"
-        data = db.execute_query(query).fetchall()
-        data = ser.show_data(data)
+        data = db.execute_query(query).fetchone()[0]
         return data
     except Exception as e:
         db.query_error_handler()
