@@ -248,13 +248,6 @@ GRANT ALL ON SEQUENCE regalias.nodo_id_seq TO regalias_admin;
 
 
 --
--- Name: DEFAULT PRIVILEGES FOR SCHEMAS; Type: DEFAULT ACL; Schema: -; Owner: semard
---
-
-ALTER DEFAULT PRIVILEGES FOR ROLE semard GRANT USAGE ON SCHEMAS TO regalias_admin;
-
-
---
 -- PostgreSQL database dump complete
 --
 
