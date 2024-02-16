@@ -7,14 +7,15 @@ def create_nodo(nodo):
     node = nd(**nodo)
 
     nodoT = (
-        date.date(),
+        '2021-10-10',
         str(node.temp),
         str(node.ph),
         str(node.ec),
         str(node.od),
         str(node.tds),
         str(node.coordenadas["latitud"]),
-        str(node.coordenadas["altitud"])
+        str(node.coordenadas["altitud"]),
+        node.id_node,
     )
     return nodoT
 

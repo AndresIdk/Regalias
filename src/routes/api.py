@@ -15,6 +15,7 @@ def get_api():
 def insert_nodo():
     try:
         nodo = request.get_json()  # Obtiene el json enviado por el cliente
+        print(nodo)
         funtion = con.insert_nodo(nodo)  # Llama a la funcion del controlador
         data = funtion.fetchone()
         return jsonify(data)  # Retorna el resultado de la funcion

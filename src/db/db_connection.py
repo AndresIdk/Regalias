@@ -32,6 +32,8 @@ class DBConnection:
                 time.sleep(1)
 
     def execute_query(self, query, params=None):
+        decoded_query = self.cursor.mogrify(query, params).decode('utf-8')
+        print("Ejecutando la consulta:", decoded_query)
         self.cursor.execute(query, params or None)
         self.connection.commit()
         return self.cursor
