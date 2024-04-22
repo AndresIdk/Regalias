@@ -1,9 +1,9 @@
 FROM python:3.12-alpine
 
-ENV FLASK_APP regalias/src/app.py
+ENV FLASK_APP Regalias_Back/src/app.py
 ENV FLASK_RUN_HOST 0.0.0.0
 
-WORKDIR /regalias
+WORKDIR /Regalias_Back
 
 RUN apk add --no-cache gcc musl-dev linux-headers
 
@@ -11,6 +11,6 @@ COPY requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-COPY . ./regalias
+COPY . ./Regalias_Back
 
-CMD ["python", "regalias/src/app.py"]
+CMD ["python", "Regalias_Back/src/app.py"]
